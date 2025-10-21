@@ -72,6 +72,18 @@ public class MainActivity extends AppCompatActivity {
 
         loadAll();
         refreshEmpty();
+
+        // Reprograma todas las notificaciones pendientes al abrir la app
+        rescheduleExisting();
+    }
+
+    private void rescheduleExisting() {
+        for (ServiceReminder r : items) {
+            if (!r.paid) {
+                ReminderScheduler.cancel(this, r.id);
+                ReminderScheduler.schedule(this, r);
+            }
+        }
     }
 
     private void requestPostNotificationsIfNeeded() {
@@ -118,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
         if (idx >= 0) items.set(idx, r); else items.add(r);
         saveAll(); adapter.notifyDataSetChanged(); refreshEmpty();
 
+        // Re-programar notificación (24 h antes)
         ReminderScheduler.cancel(this, r.id);
         ReminderScheduler.schedule(this, r);
     }
@@ -153,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         saveAll();
     }
 
-    // Menú (usa res/menu/main_menu.xml)
+    // ===== Menú =====
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -162,10 +175,48 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_history) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_history) {
             startActivity(new Intent(this, com.example.lab5_iot_20197115.ui.HistoryActivity.class));
             return true;
+
+        } else if (id == R.id.action_test_notify) {
+            // Una sola notificación de prueba en 5 s
+            ReminderScheduler.scheduleTest(
+                    this,
+                    "TEST_ONE",
+                    "Servicio de prueba",
+                    15.90,
+                    ServiceReminder.Importance.ALTA.name(),
+                    5000L
+            );
+            Toast.makeText(this, "Notificación de prueba en 5 s", Toast.LENGTH_SHORT).show();
+            return true;
+
+        } else if (id == R.id.action_test_all) {
+            // Probar con TODOS los servicios creados (escalonadas cada 3 s)
+            if (items.isEmpty()) {
+                Toast.makeText(this, "No hay servicios para probar", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            long delay = 3000L; // 3 s entre cada una
+            long acc = 0L;
+            for (ServiceReminder r : items) {
+                ReminderScheduler.scheduleTest(
+                        this,
+                        r.id,
+                        r.name == null ? "Servicio" : r.name,
+                        r.amount,
+                        r.importance.name(),
+                        acc + delay
+                );
+                acc += delay;
+            }
+            Toast.makeText(this, "Notificaciones de prueba programadas", Toast.LENGTH_SHORT).show();
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

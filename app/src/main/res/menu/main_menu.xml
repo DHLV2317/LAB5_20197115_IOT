@@ -2,9 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <!-- Historial con icono de “recientes/historial” -->
     <item
         android:id="@+id/action_history"
         android:icon="@android:drawable/ic_menu_recent_history"
         android:title="Historial de pagos"
         app:showAsAction="ifRoom|withText" />
+
+    <!-- Probar una sola notificación -->
+    <item
+        android:id="@+id/action_test_notify"
+        android:title="Probar 1 notificación (5 s)"
+        app:showAsAction="never" />
+
+    <!-- Probar con todos los servicios creados -->
+    <item
+        android:id="@+id/action_test_all"
+        android:title="Probar notificaciones de mis servicios"
+        app:showAsAction="never" />
 </menu>
