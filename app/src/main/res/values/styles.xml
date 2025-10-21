@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.LAB5_IOT_20197115" parent="Theme.Material3.DayNight">
+        <!-- colores, etc -->
+    </style>
+
+    <!-- Usada por el Manifest -->
+    <style name="Theme.LAB5_IOT_20197115.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- deja vacío; solo quita la action bar del sistema -->
+    </style>
+</resources>
